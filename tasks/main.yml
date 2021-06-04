@@ -1,0 +1,49 @@
+---
+# tasks file for dns_server
+- name: Set host name.
+  ansible.builtin.hostname:
+          name: server.example.com
+- name: install bind package.
+  dnf:
+          name: bind*
+          state: present
+  notify: restart named
+- name: add port to firewall.
+  firewalld:
+          port: "{{item}}"
+          permanent: yes
+          state: enabled
+  with_items:
+          - 53/tcp
+          - 53/udp
+- name: update named.conf file.
+  template:
+          src: named.conf.j2
+          dest: /etc/named.conf
+- name: change file owner & group owner.
+  file:
+          path: /var/named/forward.example.com
+          group: named
+          owner: root
+          state: touch
+- name: create forward.example.com file, owner & group owner.
+  file:
+          path: /var/named/reverse.example.com
+          group: named
+          owner: root
+          state: touch
+- name: insert forward.example.com file.
+  template:
+          src: forward.example.com.j2
+          dest: /var/named/forward.example.com 
+- name: create reverse.example.com file.
+  template:
+          src: reverse.example.com.j2
+          dest: /var/named/reverse.example.com
+- name: change file owner & group owner.
+  file:
+          path: /var/named/forward.example.com
+          group: named
+          owner: root
+          state: touch
+  notify: restart named

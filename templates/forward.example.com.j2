@@ -1,0 +1,14 @@
+$TTL 1D
+@	IN SOA	server.example.com. root.example.com. (
+					0	; serial
+					1D	; refresh
+					1H	; retry
+					1W	; expire
+					3H )	; minimum
+@	IN	NS	server.example.com.
+@	IN	A	{{ansible_default_ipv4.address}}
+server	IN	A	{{ansible_default_ipv4.address}}
+host	IN	A	{{ansible_default_ipv4.address}}
+www	IN	A	{{ansible_default_ipv4.address}}
+desktop	IN	A	{{client_ip}}
+client	IN	A	{{client_ip}}
